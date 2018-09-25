@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Accounts } from 'meteor/accounts-base';
 
+import { createContainer } from 'meteor/react-meteor-data';
+
 const PrivateHeader = (props) => {
     return (
         <div className='header'>
@@ -14,23 +16,12 @@ const PrivateHeader = (props) => {
 };
 
 PrivateHeader.propTypes = {
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  handleLogout: PropTypes.func.isRequired
 };
 
-export default PrivateHeader;
-
-// export default class PrivateHeader extends React.Component {
-//
-// onLogout() {
-// Accounts.logout();
-// }
-//
-// render() {
-// return (
-//   <div>
-//   <h1>{this.props.title}</h1>
-//   <button onClick={this.onLogout.bind(this)}>Log Out</button>
-//   </div>
-// );
-// }
-// }
+export default createContainer(() => {
+    return {
+        handleLogout: () => Accounts.logout()
+    };
+}, PrivateHeader);

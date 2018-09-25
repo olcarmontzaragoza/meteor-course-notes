@@ -1,4 +1,5 @@
 import assert from "assert";
+import './../imports/api/users.test';
 
 describe("short-lnk", function () {
   it("package.json has correct name", async function () {

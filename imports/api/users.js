@@ -14,4 +14,4 @@ const email = user.emails[0].address;
 
 return true;
 
-})
+});

@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 
-import Signup from '../ui/Signup';
+import { Signup } from '../ui/Signup';
 import NotFound from '../ui/NotFound';
 import Dashboard from '../ui/Dashboard';
 import Login from '../ui/Login';
