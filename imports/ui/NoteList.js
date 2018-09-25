@@ -12,10 +12,11 @@ return (
 <div>
 NoteList { props.notes.length }
 <NoteListHeader/>
-{ props.notes.map((note) => <NoteListItem key={note._id} note={note}/>) }
+{ props.notes.length === 0 ? <NoteListEmptyItem/> : undefined }
 </div>
-)
+);
 };
+
 export default createContainer(() => {
 Meteor.subscribe('notes');
 return {
