@@ -5,6 +5,7 @@ import { Signup } from '../ui/Signup';
 import NotFound from '../ui/NotFound';
 import Dashboard from '../ui/Dashboard';
 import Login from '../ui/Login';
+import { Session } from 'meteor/session';
 
 import { Router, Route, browserHistory, Switch, Redirect } from 'react-router';
 
@@ -31,6 +32,14 @@ const onEnterPrivatePage = (Component) => {
     }
 };
 
+const onEnterNotePage = (Component, nextState) => {
+    if (!Meteor.userId()) {
+        return <Redirect to="/" />;
+    } else {
+        Session.set('selectedNoteId', nextState.params.id);
+    }
+};
+
 export const onAuthChange = (isAuthenticated) => {
 const pathname = browserHistory.location.pathname;
 const isUnauthenticatedPage = unauthenticatedPages.includes(pathname);
@@ -49,7 +58,7 @@ export const routes = (
         <Switch>
           <Route exact path="/" render={() => onEnterPublicPage(Login)} />
           <Route path="/dashboard"  render={() => onEnterPrivatePage(Dashboard)}  />
-          <Route path="/dashboard/:id"  render={() => onEnterPrivatePage(Dashboard)}  />
+          <Route path="/dashboard/:id"  render={() => onEnterNotePage(Dashboard)}  />
           <Route path="/signup" render={() => onEnterPublicPage(Signup)}  />
           <Route path="*" component={NotFound}  />
         </Switch>
