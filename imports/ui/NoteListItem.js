@@ -1,6 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import { createContainer } from 'meteor/react-meteor-data';
+import { Session } from 'meteor/session';
 import PropTypes from 'prop-types';
 
 export const NoteListItem = (props) => {

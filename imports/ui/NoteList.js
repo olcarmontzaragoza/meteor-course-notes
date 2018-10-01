@@ -13,15 +13,21 @@ export const NoteList = (props) => {
 
 return (
 <div>
-NoteList { props.notes.length }
 <NoteListHeader/>
+{ props.notes.length === 0 ? <NoteListEmptyItem/> : undefined }
 { props.notes.map((note) => {
     return <NoteListItem key={note._id} note={note} />;
 })}
-{ props.notes.length === 0 ? <NoteListEmptyItem/> : undefined }
+
+
+NoteList { props.notes.length }
 </div>
 );
 };
+
+NoteList.propTypes ={
+notes: PropTypes.array.isRequired
+}
 
 export default createContainer(() => {
 const selectedNoteId = Session.get('selectedNoteId');
@@ -32,11 +38,7 @@ return {
   return {
   ...note,
   selected: note._id === selectedNoteId
-  }
+};
 })
-}
+};
 }, NoteList);
-
-NoteList.propTypes ={
-notes: PropTypes.array.isRequired
-}

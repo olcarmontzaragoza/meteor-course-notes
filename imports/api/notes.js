@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import moment from 'moment';
 import SimpleSchema from 'simpl-schema';
 
-export const Notes = new Meteor.Collection('notes');
+export const Notes = new Mongo.Collection('notes');
 
 if (Meteor.isServer) {
     Meteor.publish('notes', function() {
@@ -25,7 +25,7 @@ Meteor.methods({
     });
     },
     'notes.remove'(_id) {
-      if (this.userId) {
+      if (!this.userId) {
         throw new Meteor.Error('not authorised')
       }
       new SimpleSchema({
@@ -33,13 +33,13 @@ Meteor.methods({
           type: String,
           min: 1
         }
-      }).validate(_id);
+      }).validate({ _id });
 
       Notes.remove({ _id, userId: this.userId });
 
     },
   'notes.update'(_id, updates) {
-  if (this.userId) {
+  if (!this.userId) {
   throw new Meteor.Error('not authorised')
   }
 

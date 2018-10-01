@@ -3,8 +3,12 @@ import ReactDOM from 'react-dom';
 import { Tracker } from 'meteor/tracker';
 import { Session } from 'meteor/session';
 
-import { routes, onAuthChange } from '../imports/routes/routes.js';
-import '../imports/startup/simple-schema-configuration.js';
+import createBrowserHistory from 'history/createBrowserHistory';
+
+browserHistory = createBrowserHistory();
+
+import { routes, onAuthChange } from '../imports/routes/routes';
+import '../imports/startup/simple-schema-configuration';
 
 Tracker.autorun(() => {
 const isAuthenticated = !!Meteor.userId();
@@ -12,7 +16,11 @@ onAuthChange(isAuthenticated);
 });
 
 Tracker.autorun(() => {
+  const selectedNoteId = Session.get('selectedNoteId');
 
+  if (selectedNoteId) {
+    browserHistory.replace(`/dashboard/${selectedNoteId}`);
+  }
 });
 
 Meteor.startup(() => {
