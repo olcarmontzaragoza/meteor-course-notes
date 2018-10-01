@@ -13,49 +13,16 @@ import createBrowserHistory from 'history/createBrowserHistory';
 
 browserHistory = createBrowserHistory();
 
-const unauthenticatedPages = ['/', '/signup'];
-const authenticatedPages = ['/dashboard'];
-
-const onEnterPublicPage = (Component) => {
-    if (Meteor.userId()) {
-        return <Redirect to="/dashboard" />;
-    } else {
-        return <Component />;
-    }
-};
-
-const onEnterPrivatePage = (Component) => {
-    if (!Meteor.userId()) {
-        return <Redirect to="/" />;
-    } else {
-        return <Component />;
-    }
-};
-
-// const onEnterNotePage = (nextState) => {
-//   Session.set('selectedNoteId', nextState.params.id);
-// };
-
 const onEnterNotePage = (nextState) => {
-	  if (!Meteor.userId()) {
-	    browserHistory.replace('/');
-	  } else {
-	    Session.set('selectedNoteId', nextState.params.id);
-	  }
-	};
+Session.set('selectedNoteId', nextState.params.id);
+};
+const onLeaveNotePage = () => {
+Session.set('selectedNoteId', undefined);
+};
 
-// const onEnterNotePage = (nextState) => {
-//   if (!Meteor.userId()) {
-//     browserHistory.replace('/');
-//   } else {
-//     // Session.set('selectedNoteId', nextState.params.id);
-//   }
-// }
-
-export const onAuthChange = (isAuthenticated) => {
-const pathname = browserHistory.location.pathname;
-const isUnauthenticatedPage = unauthenticatedPages.includes(pathname);
-const isAuthenticatedPage = authenticatedPages.includes(pathname);
+export const onAuthChange = (isAuthenticated, currentPagePrivacy) => {
+const isUnauthenticatedPage = currentPagePrivacy === 'unauth';
+const isAuthenticatedPage = currentPagePrivacy === 'auth';
 
 if (isAuthenticated && isUnauthenticatedPage) {
 browserHistory.replace('/dashboard');
@@ -64,15 +31,23 @@ else if (!isAuthenticated && isAuthenticatedPage) {
 browserHistory.replace('/');
 }
 };
-
+export const globalOnChange = (prevState, nextState) => {
+globalOnChangeEnter(nextState);
+};
+export const globalOnEnter = (nextState) => {
+const lastRoute = nextState.routes[nextState.routes.length-1];
+setState('currentPagePrivacy', lastRoute.privacy);
+};
 export const routes = (
     <Router history={browserHistory}>
         <Switch>
-          <Route exact path="/" render={() => onEnterPublicPage(Login)} />
-          <Route path="/signup" render={() => onEnterPublicPage(Signup)}  />
-          <Route path="/dashboard"  render={() => onEnterPrivatePage(Dashboard)}  />
-          <Route path="/dashboard/:id" render={() => onEnterNotePage(Dashboard)} />
+          <Route onEnter={globalOnEnter} onChange={globalOnChange}>
+          <Route exact path="/" privacy="unauth" />
+          <Route path="/signup" privacy="unauth" />
+          <Route path="/dashboard" privacy="auth" />
+          <Route path="/dashboard/:id" privacy="auth" render={() => onEnterNotePage(Dashboard)} onLeave={onLeaveNotePage} />
           <Route path="*" component={NotFound}  />
+          </Route>
         </Switch>
     </Router>
 );
