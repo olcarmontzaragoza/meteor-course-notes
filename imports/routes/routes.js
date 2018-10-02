@@ -13,13 +13,12 @@ import createBrowserHistory from 'history/createBrowserHistory';
 
 browserHistory = createBrowserHistory();
 
-const onEnterNotePage = (nextState) => {
-Session.set('selectedNoteId', nextState.params.id);
+const onEnterNotePage = (Component) => {
+Session.set('selectedNoteId', this.props.match.params.id);
 };
 const onLeaveNotePage = () => {
 Session.set('selectedNoteId', undefined);
 };
-
 export const onAuthChange = (isAuthenticated, currentPagePrivacy) => {
 const isUnauthenticatedPage = currentPagePrivacy === 'unauth';
 const isAuthenticatedPage = currentPagePrivacy === 'auth';
@@ -32,7 +31,7 @@ browserHistory.replace('/');
 }
 };
 export const globalOnChange = (prevState, nextState) => {
-globalOnChangeEnter(nextState);
+globalOnEnter(nextState);
 };
 export const globalOnEnter = (nextState) => {
 const lastRoute = nextState.routes[nextState.routes.length-1];
@@ -40,14 +39,14 @@ setState('currentPagePrivacy', lastRoute.privacy);
 };
 export const routes = (
     <Router history={browserHistory}>
-        <Switch>
+          <div>
           <Route onEnter={globalOnEnter} onChange={globalOnChange}>
-          <Route exact path="/" privacy="unauth" />
-          <Route path="/signup" privacy="unauth" />
-          <Route path="/dashboard" privacy="auth" />
-          <Route path="/dashboard/:id" privacy="auth" render={() => onEnterNotePage(Dashboard)} onLeave={onLeaveNotePage} />
+          <Route exact path="/" component={Login} privacy="unauth"  />
+          <Route path="/signup" component={Signup} privacy="unauth"  />
+          <Route path="/dashboard" component={Dashboard} privacy="auth"   />
+          <Route path="/dashboard/:id" component={Dashboard} privacy="auth" onEnter={onEnterNotePage} onLeave={onLeaveNotePage} />
           <Route path="*" component={NotFound}  />
           </Route>
-        </Switch>
+          </div>
     </Router>
 );
